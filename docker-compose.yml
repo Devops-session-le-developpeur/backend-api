@@ -24,7 +24,7 @@ services:
       - mongo-express-network
 
   api:
-    image: talel12/api-session13
+    image: abdelwahebslama/api-backend-devops
     build:
       context: .
       dockerfile: Dockerfile
