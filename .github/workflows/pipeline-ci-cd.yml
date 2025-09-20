@@ -32,6 +32,8 @@ jobs:
       - run: docker images
       - run: docker tag abdelwahebslama/api-backend-devops abdelwahebslama/api-backend-devops:v2
       - run: docker images
+      - run: echo ${{ vars.DOCKERHUB_USERNAME }}
+      - run: echo   ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: login to docker hub 
         uses: docker/login-action@v3
