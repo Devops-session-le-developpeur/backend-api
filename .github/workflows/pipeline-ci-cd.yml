@@ -26,7 +26,10 @@ jobs:
     steps:
       - name: clone Source code
         uses: actions/checkout@v5
-
+      - name: build docker image
+        run: docker build -t abdelwahebslama/api-backend-devops .
+      
+      - run: docker images
         
          
 
