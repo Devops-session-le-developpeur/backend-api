@@ -11,41 +11,54 @@ env:
   Docker_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/api-backend-devops
 
 jobs:
-  run-unit-test-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: clone soure code
-        uses:  actions/checkout@v5
+  # run-unit-test-job:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: clone soure code
+  #       uses:  actions/checkout@v5
 
-      - name: install dependencies
-        run: npm install
+  #     - name: install dependencies
+  #       run: npm install
 
-      - name: run unit test
-        run: npm run test
+  #     - name: run unit test
+  #       run: npm run test
  
-  build-docker-image-and-push:
-    runs-on: ubuntu-latest
-    needs: run-unit-test-job
-    steps:
-      - name: clone Source code
-        uses: actions/checkout@v5
-      - name: build docker image
-        run: docker build -t ${{ env.Docker_IMAGE }} .
+  # build-docker-image-and-push:
+  #   runs-on: ubuntu-latest
+  #   needs: run-unit-test-job
+  #   steps:
+  #     - name: clone Source code
+  #       uses: actions/checkout@v5
+  #     - name: build docker image
+  #       run: docker build -t ${{ env.Docker_IMAGE }} .
       
-      - run: docker images
-      - run: docker tag ${{ env.Docker_IMAGE }} ${{ env.Docker_IMAGE }}:v${{ github.run_number }} 
-      - run: docker images
-      - run: echo ${{ vars.DOCKERHUB_USERNAME }}
-      - run: echo   ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - run: docker images
+  #     - run: docker tag ${{ env.Docker_IMAGE }} ${{ env.Docker_IMAGE }}:v${{ github.run_number }} 
+  #     - run: docker images
+  #     - run: echo ${{ vars.DOCKERHUB_USERNAME }}
+  #     - run: echo   ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: login to docker hub 
-        uses: docker/login-action@v3
+  #     - name: login to docker hub 
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ vars.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}   
+  #     - name: push docker hub image  latest
+  #       run: docker push ${{ env.Docker_IMAGE }}:v${{ github.run_number }}  
+    
+  deploey-docker-image:
+    name: Build
+    # needs: build-docker-image-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v1
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}   
-      - name: push docker hub image  latest
-        run: docker push ${{ env.Docker_IMAGE }}:v${{ github.run_number }}  
-         
+          host: ${{ secrets.VPS_HOST }}
+          username: user
+          password: ${{ secrets.VPS_PASSWORD }}          
+          script: whoami
+     
  
  
   
