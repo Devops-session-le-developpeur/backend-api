@@ -44,7 +44,10 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}   
       - name: push docker hub image  latest
-        run: docker push ${{ env.Docker_IMAGE }}:v${{ github.run_number }}  
+        run: docker push ${{ env.Docker_IMAGE }}:v${{ github.run_number }} 
+    
+      - name: push docker hub image  latest
+        run: docker push ${{ env.Docker_IMAGE }}:latest  
     
   deploey-docker-image:
     name: Build

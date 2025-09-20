@@ -24,7 +24,7 @@ services:
       - mongo-express-network
 
   api:
-    image: abdelwahebslama/api-backend-devops:latest
+    image: abdelwahebslama/api-backend-devops
     build:
       context: .
       dockerfile: Dockerfile
