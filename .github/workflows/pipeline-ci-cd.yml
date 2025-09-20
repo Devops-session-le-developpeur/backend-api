@@ -30,7 +30,7 @@ jobs:
         run: docker build -t abdelwahebslama/api-backend-devops .
       
       - run: docker images
-      - run: docker tag abdelwahebslama/api-backend-devops abdelwahebslama/api-backend-devops:v2
+      - run: docker tag abdelwahebslama/api-backend-devops abdelwahebslama/api-backend-devops:v${{ secrets.run_number }} 
       - run: docker images
       - run: echo ${{ vars.DOCKERHUB_USERNAME }}
       - run: echo   ${{ secrets.DOCKERHUB_TOKEN }}
@@ -40,8 +40,8 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}   
-      - name: push docker hub image 
-        run: docker push abdelwahebslama/api-backend-devops:v2
+      - name: push docker hub image  latest
+        run: docker push abdelwahebslama/api-backend-devops:v${{ secrets.run_number }}  
          
  
  
