@@ -36,7 +36,7 @@ connectDB();
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Server is running!​💪​🙂​");
+  res.send("Server is running!🚀​");
 });
 
 app.get("/hello", (req, res) => {
