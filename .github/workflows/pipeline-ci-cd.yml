@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: clone soure code
-        run:  actions/checkout@v5
-        
+        uses:  actions/checkout@v5
+
      
   
 
