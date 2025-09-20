@@ -13,14 +13,24 @@ jobs:
     steps:
       - name: clone soure code
         uses:  actions/checkout@v5
-        
+
       - name: install dependencies
         run: npm install
 
       - name: run unit test
         run: npm run test
+    
+  build-docker-image-and-push:
+    runs-on: ubuntu-latest
+    needs: run-unit-test-job
+    steps:
+      - name: clone Source code
+        uses: actions/checkout@v5
 
+        
+         
 
+ 
      
   
 
