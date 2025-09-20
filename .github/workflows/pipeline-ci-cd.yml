@@ -33,7 +33,7 @@ jobs:
         run: docker build -t ${{ env.Docker_IMAGE }} .
       
       - run: docker images
-      - run: docker tag ${{ env.Docker_IMAGE }} ${{ env.Docker_IMAGE }}:v${{ secrets.run_number }} 
+      - run: docker tag ${{ env.Docker_IMAGE }} ${{ env.Docker_IMAGE }}:v${{ github.run_number }} 
       - run: docker images
       - run: echo ${{ vars.DOCKERHUB_USERNAME }}
       - run: echo   ${{ secrets.DOCKERHUB_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}   
       - name: push docker hub image  latest
-        run: docker push ${{ env.Docker_IMAGE }}:v${{ secrets.run_number }}  
+        run: docker push ${{ env.Docker_IMAGE }}:v${{ github.run_number }}  
          
  
  
