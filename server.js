@@ -31,7 +31,7 @@ async function connectDB() {
   }
 }
 
-connectDB();
+await connectDB();
 
 // Routes
 app.get("/", (req, res) => {
