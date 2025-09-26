@@ -11,7 +11,11 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware.
 app.use(express.json());
-app.use(cors()); // Enable CORS for all routes
+app.use(cors(
+  {
+    origin: ["http://localhost:5173", "https://app.26.lebondeveloppeur.net"]
+  }
+)); // Enable CORS for all routes
  
 // Database Connection - KEEP ONLY ONE VERSION
 const connectDB = async () => {
