@@ -12,26 +12,25 @@ const PORT = process.env.PORT || 3001;
 // Middleware.
 app.use(express.json());
 app.use(cors()); // Enable CORS for all routes
-
-// Database Connection
-async function connectDB() {
+ 
+// Database Connection - KEEP ONLY ONE VERSION
+const connectDB = async () => {
   if (process.env.NODE_ENV === "test") {
-    // Skip MongoDB connection if in test environment
     console.log("Skipping MongoDB connection in test environment.");
     return;
   }
 
   try {
-  
     await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error("MongoDB connection error:", error);
     process.exit(1);
   }
-}
+};
 
-await connectDB();
+// Connect to database
+connectDB();
 
 // Routes
 app.get("/", (req, res) => {

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../server'; // Import the app
+import { app } from '../server.js'; // Import the app
 
 describe("Express App Tests", () => {
   it("should return 200 OK on GET /", async () => {
