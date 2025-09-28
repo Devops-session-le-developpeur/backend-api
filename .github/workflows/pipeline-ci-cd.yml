@@ -51,14 +51,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js (if applicable)
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
       - name: Install Dependency Scanning Tool (Snyk)
         run: npm install -g snyk
-      - name: SNYK_TOKEN 
-        run: echo ${{ secrets.SNYK_TOKEN }}
 
       - name: Snyk Authentication
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
-    
+
       - name: Run Snyk Test (Continue on error to capture results)
         id: snyk-test
         run: |
@@ -72,18 +75,18 @@ jobs:
           # Always run monitor to get the URL, even if test failed
           MONITOR_OUTPUT=$(snyk monitor --all-projects --org=talel12)
           echo "Monitor output: $MONITOR_OUTPUT"
-          
+
           # Extract monitor URL
           MONITOR_URL=$(echo "$MONITOR_OUTPUT" | grep -o 'https://app.snyk.io/org/[^ ]*' | head -1 || echo "")
-          
+
           if [ -z "$MONITOR_URL" ]; then
             MONITOR_URL=$(echo "$MONITOR_OUTPUT" | grep -o 'https://app.snyk.io/[^ ]*' | head -1 || echo "")
           fi
-          
+
           if [ -z "$MONITOR_URL" ]; then
             MONITOR_URL="https://app.snyk.io/org/talel12/projects"
           fi
-          
+
           echo "monitor_url=$MONITOR_URL" >> $GITHUB_OUTPUT
           echo "Captured monitor URL: $MONITOR_URL"
 
@@ -115,15 +118,86 @@ jobs:
               "text": "❌ *Snyk Security Scan Failed for Backend-api* ❗️\n🔁 Branch: `${{ github.ref_name }}`\n🔗 [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📊 [View Snyk Dashboard](${{ steps.snyk-monitor.outputs.monitor_url }})\n⚠️ Vulnerabilities were detected in the code"
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }} 
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    # runs-on: ubuntu-latest
+    # needs: run-unit-test-job
+    # steps:
+    #   - name: Checkout Code
+    #     uses: actions/checkout@v4
 
-      # - name: Run Snyk Vulnerability test
-      #   run: snyk test
+    #   - name: Install Dependency Scanning Tool (Snyk)
+    #     run: npm install -g snyk
+    #   - name: SNYK_TOKEN
+    #     run: echo ${{ secrets.SNYK_TOKEN }}
 
-      # - name: Run Snyk Vulnerability Scan
-      #   run: snyk monitor --all-projects --org=abdelwahebslama
+    #   - name: Snyk Authentication
+    #     run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-  build-docker-image-and-push:  
+    #   - name: Run Snyk Test (Continue on error to capture results)
+    #     id: snyk-test
+    #     run: |
+    #       # Run snyk test but don't fail immediately
+    #       snyk test --all-projects || echo "exit_code=$?" >> $GITHUB_OUTPUT
+    #     continue-on-error: true
+
+    #   - name: Run Snyk Monitor and Capture URL
+    #     id: snyk-monitor
+    #     run: |
+    #       # Always run monitor to get the URL, even if test failed
+    #       MONITOR_OUTPUT=$(snyk monitor --all-projects --org=talel12)
+    #       echo "Monitor output: $MONITOR_OUTPUT"
+
+    #       # Extract monitor URL
+    #       MONITOR_URL=$(echo "$MONITOR_OUTPUT" | grep -o 'https://app.snyk.io/org/[^ ]*' | head -1 || echo "")
+
+    #       if [ -z "$MONITOR_URL" ]; then
+    #         MONITOR_URL=$(echo "$MONITOR_OUTPUT" | grep -o 'https://app.snyk.io/[^ ]*' | head -1 || echo "")
+    #       fi
+
+    #       if [ -z "$MONITOR_URL" ]; then
+    #         MONITOR_URL="https://app.snyk.io/org/talel12/projects"
+    #       fi
+
+    #       echo "monitor_url=$MONITOR_URL" >> $GITHUB_OUTPUT
+    #       echo "Captured monitor URL: $MONITOR_URL"
+
+    #   - name: Fail pipeline if vulnerabilities found
+    #     run: |
+    #       # Check if the previous test step failed
+    #       if [ "${{ steps.snyk-test.outcome }}" == "failure" ]; then
+    #         echo "❌ Snyk test found vulnerabilities - failing pipeline"
+    #         exit 1
+    #       fi
+
+    #   - name: Notify Slack on Success
+    #     if: success()
+    #     uses: slackapi/slack-github-action@v1.23.0
+    #     with:
+    #       payload: |
+    #         {
+    #           "text": "✅ *Snyk Security Scan Successful* ✅\n🔁 Branch: `${{ github.ref_name }}`\n🏗 Build: `${{ github.run_number }}`\n🔗 [View Workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📊 [View Snyk Dashboard](${{ steps.snyk-monitor.outputs.monitor_url }})"
+    #         }
+    #     env:
+    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    #   - name: Notify Slack on Failure
+    #     if: failure()
+    #     uses: slackapi/slack-github-action@v1.23.0
+    #     with:
+    #       payload: |
+    #         {
+    #           "text": "❌ *Snyk Security Scan Failed for Backend-api* ❗️\n🔁 Branch: `${{ github.ref_name }}`\n🔗 [View Logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📊 [View Snyk Dashboard](${{ steps.snyk-monitor.outputs.monitor_url }})\n⚠️ Vulnerabilities were detected in the code"
+    #         }
+    #     env:
+    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    # - name: Run Snyk Vulnerability test
+    #   run: snyk test
+
+    # - name: Run Snyk Vulnerability Scan
+    #   run: snyk monitor --all-projects --org=abdelwahebslama
+
+  build-docker-image-and-push:
     runs-on: ubuntu-latest
     needs: [sonarqube-code-quality-scan-job, snyk-code-security-scan-job]
     steps:
