@@ -53,12 +53,14 @@ jobs:
 
       - name: Install Dependency Scanning Tool (Snyk)
         run: npm install -g snyk
+      - name: SNYK_TOKEN 
+        run: echo ${{ secrets.SNYK_TOKEN }}
 
       - name: Snyk Authentication
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: Run Snyk Vulnerability Scan
-        run: snyk monitor --all-projects --org=Devops-session-le-developpeur
+        run: snyk monitor --all-projects --org=abdelwahebslama
 
   build-docker-image-and-push:  
     runs-on: ubuntu-latest
