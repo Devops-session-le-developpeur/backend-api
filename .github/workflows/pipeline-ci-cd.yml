@@ -73,7 +73,7 @@ jobs:
         id: snyk-monitor
         run: |
           # Always run monitor to get the URL, even if test failed
-          MONITOR_OUTPUT=$(snyk monitor --all-projects --org=talel12)
+          MONITOR_OUTPUT=$(snyk monitor --all-projects --org=abdelwahebslama)
           echo "Monitor output: $MONITOR_OUTPUT"
 
           # Extract monitor URL
@@ -84,7 +84,7 @@ jobs:
           fi
 
           if [ -z "$MONITOR_URL" ]; then
-            MONITOR_URL="https://app.snyk.io/org/talel12/projects"
+            MONITOR_URL="https://app.snyk.io/org/abdelwahebslama/projects"
           fi
 
           echo "monitor_url=$MONITOR_URL" >> $GITHUB_OUTPUT
